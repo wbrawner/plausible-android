@@ -22,7 +22,7 @@ By default, the SDK will be enabled at app startup, though you can prevent this 
 opt-in or opt-out like so:
 
 ```xml
-<string name="plausible_enable_startup">true</string>
+<string name="plausible_enable_startup">false</string>
 ```
 
 You can then manually enable the sdk with the following:
@@ -30,14 +30,6 @@ You can then manually enable the sdk with the following:
 ```java
 Plausible.enable(true)
 ```
-
-If you'd like to set a static user agent, you can do that as well:
-
-```xml
-<string name="plausible_user_agent" />
-```
-
-Though it's probably best to use a unique user-agent for 
 
 ### Sending Events
 
@@ -55,13 +47,18 @@ Plausible.event("ctaClick")
 
 ## Download
 
+This project is still in early development, so while I finalize the API, write the documentation,
+and begin writing tests, I'll only be publishing to Sonatype's snapshots repository: 
+
 ```groovy
 repositories {
-    mavenCentral()
+    maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 dependencies {
-    implementation 'com.wbrawner.plausble:plausible-android:0.1.0-SNAPSHOT'
+    implementation 'com.wbrawner.plausible:plausible-android:0.1.0-SNAPSHOT'
 }
 ```
 

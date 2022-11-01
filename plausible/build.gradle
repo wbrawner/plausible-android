@@ -2,8 +2,8 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization'
-    id 'maven-publish'
-    id 'signing'
+    id 'com.vanniktech.maven.publish'
+    id 'org.jetbrains.dokka'
 }
 
 android {
@@ -35,10 +35,12 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
+}
+
+dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            noAndroidSdkLink.set(false)
         }
     }
 }
@@ -52,24 +54,4 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     testImplementation 'junit:junit:4.13.2'
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId 'com.wbrawner.plausible'
-                artifactId 'plausible-android'
-                version = android.defaultConfig.versionName
-            }
-        }
-
-        repositories {
-//            maven {
-//                name = 'local'
-//                url = "${project.buildDir}/repo"
-//            }
-        }
-    }
 }
