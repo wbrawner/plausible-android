@@ -14,7 +14,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
-import java.net.URL
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -134,6 +133,10 @@ internal class NetworkFirstPlausibleClient(private val config: PlausibleConfig) 
     }
 
     private suspend fun postEvent(event: Event) {
+        if (!config.enable) {
+            Log.w("Plausible", "Plausible disabled, not sending event: $event")
+            return
+        }
         val body = event.toJson().toRequestBody("application/json".toMediaType())
         val url = config.host
             .toHttpUrl()
