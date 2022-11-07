@@ -69,19 +69,19 @@ open class ThreadSafePlausibleConfig(
     override val screenWidth: Int
 ) : PlausibleConfig {
 
-    private val enableRef = AtomicBoolean()
+    private val enableRef = AtomicBoolean(true)
     override var enable: Boolean
         get() = enableRef.get()
         set(value) = enableRef.set(value)
 
-    private val domainRef = AtomicReference<String>()
+    private val domainRef = AtomicReference("")
     override var domain: String
         get() = domainRef.get()
         set(value) = domainRef.set(value)
 
     private val hostRef = AtomicReference(DEFAULT_PLAUSIBLE_HOST)
     override var host: String
-        get() = hostRef.get()
+        get() = hostRef.get() ?: ""
         set(value) = hostRef.set(value.ifBlank { DEFAULT_PLAUSIBLE_HOST })
 
     private val retryRef = AtomicBoolean(true)

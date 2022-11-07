@@ -14,6 +14,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -79,8 +80,11 @@ internal interface PlausibleClient {
  * The primary client for sending events to Plausible. It will attempt to send events immediately,
  * caching them to disk to send later upon failure.
  */
-internal class NetworkFirstPlausibleClient(private val config: PlausibleConfig) : PlausibleClient {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+internal class NetworkFirstPlausibleClient(
+    private val config: PlausibleConfig,
+    coroutineContext: CoroutineContext = Dispatchers.IO
+) : PlausibleClient {
+    private val coroutineScope = CoroutineScope(coroutineContext)
 
     init {
         coroutineScope.launch {
@@ -125,7 +129,7 @@ internal class NetworkFirstPlausibleClient(private val config: PlausibleConfig) 
                     postEvent(event)
                     file.delete()
                     break
-                } catch(e: IOException) {
+                } catch (e: IOException) {
                     retryAttempts++
                 }
             }
