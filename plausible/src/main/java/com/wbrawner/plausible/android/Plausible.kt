@@ -1,6 +1,7 @@
 package com.wbrawner.plausible.android
 
 import android.content.Context
+import android.util.Log
 import com.wbrawner.plausible.android.Plausible.init
 
 /**
@@ -10,8 +11,8 @@ import com.wbrawner.plausible.android.Plausible.init
  * must ensure that [init] is called prior to sending events.
  */
 object Plausible {
-    internal lateinit var client: PlausibleClient
-    internal lateinit var config: PlausibleConfig
+    internal var client: PlausibleClient? = null
+    internal var config: PlausibleConfig? = null
 
     fun init(context: Context) {
         val config = AndroidResourcePlausibleConfig(context)
@@ -29,7 +30,12 @@ object Plausible {
      */
     @Suppress("unused")
     fun enable(enable: Boolean) {
-        config.enable = enable
+        config?.let {
+            it.enable = enable
+        } ?: Log.w(
+            "Plausible",
+            "Ignoring call to enable(). Did you forget to call Plausible.init()?"
+        )
     }
 
     /**
@@ -42,7 +48,12 @@ object Plausible {
      */
     @Suppress("unused")
     fun setUserAgent(userAgent: String) {
-        config.userAgent = userAgent
+        config?.let {
+            it.userAgent = userAgent
+        } ?: Log.w(
+            "Plausible",
+            "Ignoring call to setUserAgent(). Did you forget to call Plausible.init()?"
+        )
     }
 
     /**
@@ -105,6 +116,16 @@ object Plausible {
         referrer: String = "",
         props: Map<String, Any?>? = null
     ) {
-        client.event(config.domain, name, url, referrer, config.screenWidth, props)
+        client?.let { client ->
+            config?.let { config ->
+                client.event(config.domain, name, url, referrer, config.screenWidth, props)
+            } ?: Log.w(
+                "Plausible",
+                "Ignoring call to event(). Did you forget to call Plausible.init()?"
+            )
+        } ?: Log.w(
+            "Plausible",
+            "Ignoring call to event(). Did you forget to call Plausible.init()?"
+        )
     }
 }
