@@ -148,26 +148,28 @@ internal class NetworkFirstPlausibleClient(private val config: PlausibleConfig) 
             .addHeader("User-Agent", config.userAgent)
             .post(body)
             .build()
-        suspendCancellableCoroutine {
+        suspendCancellableCoroutine { continuation ->
             val call = okHttpClient.newCall(request)
-            it.invokeOnCancellation {
+            continuation.invokeOnCancellation {
                 call.cancel()
             }
 
             call.enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     Log.e("Plausible", "Failed to send event to backend", e)
-                    it.resumeWithException(e)
+                    continuation.resumeWithException(e)
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        it.resume(Unit)
-                    } else {
-                        val e = IOException(
-                            "Received unexpected response: ${response.code} ${response.body?.string()}"
-                        )
-                        onFailure(call, e)
+                    response.use { res ->
+                        if (res.isSuccessful) {
+                            continuation.resume(Unit)
+                        } else {
+                            val e = IOException(
+                                "Received unexpected response: ${res.code} ${res.body?.string()}"
+                            )
+                            onFailure(call, e)
+                        }
                     }
                 }
             })
