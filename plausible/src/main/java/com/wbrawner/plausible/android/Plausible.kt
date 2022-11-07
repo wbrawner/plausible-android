@@ -1,6 +1,7 @@
 package com.wbrawner.plausible.android
 
 import android.content.Context
+import com.wbrawner.plausible.android.Plausible.init
 
 /**
  * Singleton for sending events to Plausible.
@@ -47,7 +48,6 @@ object Plausible {
     /**
      * Send a `pageview` event.
      *
-     * @param domain Domain name of the site in Plausible.
      * @param url URL of the page where the event was triggered. If the URL contains UTM parameters,
      * they will be extracted and stored.
      * The URL parameter will feel strange in a mobile app but you can manufacture something that looks
@@ -62,29 +62,23 @@ object Plausible {
      * hostname will be used as the `visit:source` and the full URL as the `visit:referrer`. So if
      * you send `https://some.domain.com/example-path`, it will be parsed as follows:
      * `visit:source == some.domain.com` `visit:referrer == some.domain.com/example-path`
-     * @param screenWidth Width of the screen in dp.
      * @param props Custom properties for the event. Values must be scalar. See [https://plausible.io/docs/custom-event-goals#using-custom-props](https://plausible.io/docs/custom-event-goals#using-custom-props)
      * for more information.
      */
     fun pageView(
         url: String,
         referrer: String = "",
-        domain: String = config.domain,
-        screenWidth: Int = config.screenWidth,
         props: Map<String, Any?>? = null
     ) = event(
-        domain = domain,
         name = "pageview",
         url = url,
         referrer = referrer,
-        screenWidth = screenWidth,
         props = props
     )
 
     /**
      * Send a custom event. To send a `pageview` event, consider using [pageView] instead.
      *
-     * @param domain Domain name of the site in Plausible.
      * @param name Name of the event. Can specify `pageview` which is a special type of event in
      * Plausible. All other names will be treated as custom events.
      * @param url URL of the page where the event was triggered. If the URL contains UTM parameters,
@@ -101,7 +95,6 @@ object Plausible {
      * hostname will be used as the `visit:source` and the full URL as the `visit:referrer`. So if
      * you send `https://some.domain.com/example-path`, it will be parsed as follows:
      * `visit:source == some.domain.com` `visit:referrer == some.domain.com/example-path`
-     * @param screenWidth Width of the screen in dp.
      * @param props Custom properties for the event. Values must be scalar. See [https://plausible.io/docs/custom-event-goals#using-custom-props](https://plausible.io/docs/custom-event-goals#using-custom-props)
      * for more information.
      */
@@ -110,10 +103,8 @@ object Plausible {
         name: String,
         url: String,
         referrer: String = "",
-        domain: String = config.domain,
-        screenWidth: Int = config.screenWidth,
         props: Map<String, Any?>? = null
     ) {
-        client.event(domain, name, url, referrer, screenWidth, props)
+        client.event(config.domain, name, url, referrer, config.screenWidth, props)
     }
 }
