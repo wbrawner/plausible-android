@@ -3,6 +3,7 @@ package com.wbrawner.plausible.android
 import android.content.Context
 import android.util.Log
 import com.wbrawner.plausible.android.Plausible.init
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Singleton for sending events to Plausible.
@@ -11,8 +12,8 @@ import com.wbrawner.plausible.android.Plausible.init
  * must ensure that [init] is called prior to sending events.
  */
 object Plausible {
-    internal var client: PlausibleClient? = null
-    internal var config: PlausibleConfig? = null
+    internal val client: AtomicReference<PlausibleClient?> = AtomicReference(null)
+    internal val config: AtomicReference<PlausibleConfig?> = AtomicReference(null)
 
     fun init(context: Context) {
         val config = AndroidResourcePlausibleConfig(context)
@@ -21,8 +22,8 @@ object Plausible {
     }
 
     internal fun init(client: PlausibleClient, config: PlausibleConfig) {
-        this.client = client
-        this.config = config
+        this.client.set(client)
+        this.config.set(config)
     }
 
     /**
@@ -30,12 +31,14 @@ object Plausible {
      */
     @Suppress("unused")
     fun enable(enable: Boolean) {
-        config?.let {
-            it.enable = enable
-        } ?: Log.w(
-            "Plausible",
-            "Ignoring call to enable(). Did you forget to call Plausible.init()?"
-        )
+        config.get()
+            ?.let {
+                it.enable = enable
+            }
+            ?: Log.w(
+                "Plausible",
+                "Ignoring call to enable(). Did you forget to call Plausible.init()?"
+            )
     }
 
     /**
@@ -48,12 +51,14 @@ object Plausible {
      */
     @Suppress("unused")
     fun setUserAgent(userAgent: String) {
-        config?.let {
-            it.userAgent = userAgent
-        } ?: Log.w(
-            "Plausible",
-            "Ignoring call to setUserAgent(). Did you forget to call Plausible.init()?"
-        )
+        config.get()
+            ?.let {
+                it.userAgent = userAgent
+            }
+            ?: Log.w(
+                "Plausible",
+                "Ignoring call to setUserAgent(). Did you forget to call Plausible.init()?"
+            )
     }
 
     /**
@@ -116,16 +121,20 @@ object Plausible {
         referrer: String = "",
         props: Map<String, Any?>? = null
     ) {
-        client?.let { client ->
-            config?.let { config ->
-                client.event(config.domain, name, url, referrer, config.screenWidth, props)
-            } ?: Log.w(
+        client.get()
+            ?.let { client ->
+                config.get()
+                    ?.let { config ->
+                        client.event(config.domain, name, url, referrer, config.screenWidth, props)
+                    }
+                    ?: Log.w(
+                        "Plausible",
+                        "Ignoring call to event(). Did you forget to call Plausible.init()?"
+                    )
+            }
+            ?: Log.w(
                 "Plausible",
                 "Ignoring call to event(). Did you forget to call Plausible.init()?"
             )
-        } ?: Log.w(
-            "Plausible",
-            "Ignoring call to event(). Did you forget to call Plausible.init()?"
-        )
     }
 }
