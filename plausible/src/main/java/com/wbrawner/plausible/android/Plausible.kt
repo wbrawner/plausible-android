@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicReference
  * must ensure that [init] is called prior to sending events.
  */
 object Plausible {
-    internal val client: AtomicReference<PlausibleClient?> = AtomicReference(null)
-    internal val config: AtomicReference<PlausibleConfig?> = AtomicReference(null)
+    private val client: AtomicReference<PlausibleClient?> = AtomicReference(null)
+    private val config: AtomicReference<PlausibleConfig?> = AtomicReference(null)
 
     fun init(context: Context) {
         val config = AndroidResourcePlausibleConfig(context)

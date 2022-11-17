@@ -1,15 +1,15 @@
 package com.wbrawner.plausible.android
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.io.File
 
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 internal class NetworkFirstPlausibleClientTest {
 
     private lateinit var client: NetworkFirstPlausibleClient
@@ -27,7 +27,7 @@ internal class NetworkFirstPlausibleClientTest {
 
     @Ignore("Not yet implemented")
     @Test
-    fun events_are_sent_to_server() = networkFirstClientTest {
+    fun `events are sent to server`() = networkFirstClientTest {
         client.event(
             domain = "test.example.com",
             name = "eventUrl",
