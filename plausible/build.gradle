@@ -56,6 +56,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.5.0'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation 'com.jakewharton.timber:timber:5.0.1'
     def okhttp_version = "4.10.0"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"

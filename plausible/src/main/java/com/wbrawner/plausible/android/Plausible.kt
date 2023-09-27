@@ -1,8 +1,8 @@
 package com.wbrawner.plausible.android
 
 import android.content.Context
-import android.util.Log
 import com.wbrawner.plausible.android.Plausible.init
+import timber.log.Timber
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -35,10 +35,8 @@ object Plausible {
             ?.let {
                 it.enable = enable
             }
-            ?: Log.w(
-                "Plausible",
-                "Ignoring call to enable(). Did you forget to call Plausible.init()?"
-            )
+            ?: Timber.tag("Plausible")
+                .w("Ignoring call to enable(). Did you forget to call Plausible.init()?")
     }
 
     /**
@@ -55,10 +53,8 @@ object Plausible {
             ?.let {
                 it.userAgent = userAgent
             }
-            ?: Log.w(
-                "Plausible",
-                "Ignoring call to setUserAgent(). Did you forget to call Plausible.init()?"
-            )
+            ?: Timber.tag("Plausible")
+                .w("Ignoring call to setUserAgent(). Did you forget to call Plausible.init()?")
     }
 
     /**
@@ -127,14 +123,10 @@ object Plausible {
                     ?.let { config ->
                         client.event(config.domain, name, url, referrer, config.screenWidth, props)
                     }
-                    ?: Log.w(
-                        "Plausible",
-                        "Ignoring call to event(). Did you forget to call Plausible.init()?"
-                    )
+                    ?: Timber.tag("Plausible")
+                        .w("Ignoring call to event(). Did you forget to call Plausible.init()?")
             }
-            ?: Log.w(
-                "Plausible",
-                "Ignoring call to event(). Did you forget to call Plausible.init()?"
-            )
+            ?: Timber.tag("Plausible")
+                .w("Ignoring call to event(). Did you forget to call Plausible.init()?")
     }
 }

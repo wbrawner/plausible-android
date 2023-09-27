@@ -1,17 +1,21 @@
 package com.wbrawner.plausible.android
 
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.*
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import okhttp3.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
@@ -138,7 +142,7 @@ internal class NetworkFirstPlausibleClient(
 
     private suspend fun postEvent(event: Event) {
         if (!config.enable) {
-            Log.w("Plausible", "Plausible disabled, not sending event: $event")
+            Timber.tag("Plausible").w("Plausible disabled, not sending event: $event")
             return
         }
         val body = event.toJson().toRequestBody("application/json".toMediaType())
@@ -160,7 +164,7 @@ internal class NetworkFirstPlausibleClient(
 
             call.enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.e("Plausible", "Failed to send event to backend", e)
+                    Timber.tag("Plausible").e(e, "Failed to send event to backend")
                     continuation.resumeWithException(e)
                 }
 
