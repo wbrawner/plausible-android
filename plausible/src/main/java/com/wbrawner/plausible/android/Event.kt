@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * @param domain Domain name of the site in Plausible.
@@ -30,13 +29,7 @@ internal data class Event(
     val referrer: String,
     @SerialName("screen_width")
     val screenWidth: Int,
-    // While this would be a lot more sensible as a map, Plausible < 1.5.0 expects the props to be
-    // double encoded for some reason. This will be fixed in 1.5.0 but not everyone who self-hosts
-    // will update immediately and it does appear that Plausible > 1.5.0 maintains backwards
-    // compatibility with the double encoded string, so it makes sense to continue doing things the
-    // old way for now. See the discussion linked below for more details:
-    // https://github.com/plausible/analytics/discussions/1570
-    val props: String?
+    val props: Map<String, String>?
 ) {
     companion object {
         fun fromJson(json: String): Event? = try {

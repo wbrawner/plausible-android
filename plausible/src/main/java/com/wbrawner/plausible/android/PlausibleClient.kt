@@ -53,27 +53,7 @@ internal interface PlausibleClient {
             correctedUrl.toString(),
             referrer,
             screenWidth,
-            props?.mapValues {
-                when (val value = it.value) {
-                    is Number -> JsonPrimitive(value)
-                    is Boolean -> JsonPrimitive(value)
-                    is String -> JsonPrimitive(value)
-                    null -> JsonNull
-                    else -> {
-                        Log.w(
-                            "PlausibleClient",
-                            "Event props must be scalar. Value for prop \"${it.key}\" will be converted to String"
-                        )
-                        JsonPrimitive(value.toString())
-                    }
-                }
-            }.run {
-                if (this?.isNotEmpty() == true) {
-                    Json.encodeToString(this)
-                } else {
-                    null
-                }
-            }
+            props?.mapValues { (_, v) -> v.toString() }
         ))
     }
 
