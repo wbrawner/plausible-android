@@ -95,6 +95,11 @@ internal class NetworkFirstPlausibleClient(
             config.eventDir.mkdirs()
             config.eventDir.listFiles()?.forEach {
                 val event = Event.fromJson(it.readText())
+                if (event == null) {
+                    Timber.tag("Plausible").e("Failed to decode event JSON, discarding")
+                    it.delete()
+                    return@forEach
+                }
                 try {
                     postEvent(event)
                 } catch (e: IOException) {

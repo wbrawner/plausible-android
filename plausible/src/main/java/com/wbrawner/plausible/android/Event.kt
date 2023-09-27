@@ -39,7 +39,11 @@ internal data class Event(
     val props: String?
 ) {
     companion object {
-        fun fromJson(json: String): Event = Json.decodeFromString(json)
+        fun fromJson(json: String): Event? = try {
+            Json.decodeFromString(json)
+        } catch (ignored: Exception) {
+            null
+        }
     }
 }
 
