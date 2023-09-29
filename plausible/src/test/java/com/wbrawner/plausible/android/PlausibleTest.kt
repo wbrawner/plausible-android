@@ -52,6 +52,6 @@ internal class PlausibleTest {
         assertEquals("app://localhost/eventUrl", event.url)
         assertEquals(SCREEN_WIDTH, event.screenWidth)
         assertEquals("referrer", event.referrer)
-        assertEquals("{\"prop1\":\"propVal\"}", event.props)
+        assertEquals(mapOf("prop1" to "propVal"), event.props)
     }
 }
