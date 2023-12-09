@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+    - name: Configure Sonatype Auth
+      run: chmod +x gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew assemblePlayDebug assemblePlayDebugAndroidTest
+    - name: Publish to Sonatype
+      run: ./gradlew assemblePlayDebug assemblePlayDebugAndroidTest
